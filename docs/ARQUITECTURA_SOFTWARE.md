@@ -1,36 +1,68 @@
-# Arquitectura prevista de neiron
+# Arquitectura local · neiron P01 y Motor / Lab
 
-Estado: diseño de integración; no hay aplicación funcional ni adquisición real en esta entrega.
+Estado al 2 de octubre de 2026: aplicación neiron y simulador autónomo Motor / Lab 1.0.0 implementados y probados con **datos simulados**. Diseño mecánico v03 conservado. Adquisición física pendiente e IA desactivada.
 
 ```mermaid
 flowchart LR
-  S[Simulador identificado] --> R[Recepción y validación]
-  E[ESP32 futuro por Wi-Fi] --> R
-  R --> D[(Historial local SQLite)]
-  R --> K[Indicadores y reglas de alarma]
-  K --> U[Monitoreo y avisos dentro de la app]
-  H[Ventana de reportes humanos] --> D
-  D --> A[Adaptador de contexto]
-  A -. futuro .-> M[MACHINA y proveedor LLM opcionales]
-  M -. sugerencias con evidencia .-> U
+  S[Simulador sintético] --> R[Recepción y contrato v1]
+  R --> D[(SQLite local)]
+  R --> K[Reglas locales de alarma]
+  K --> D
+  D --> U[Monitoreo / Historial / Alarmas]
+  H[Formulario de intervenciones] --> D
+  E[ESP32 futuro] -. transporte pendiente .-> R
+  A[Asistencia opcional futura] -. sin implementar .-> U
 ```
 
-## Aplicación local
+Un proceso Python 3.12, un hilo de simulación cada ≈ 1 s, servidor HTTP de la biblioteca estándar y acceso SQLite serializado. Se eligió la biblioteca estándar porque cubre el alcance local sin instalar FastAPI u otras herramientas. Código principal único en `software/`, adecuado para el portafolio; datos en `%LOCALAPPDATA%\neiron\prototipo-01`, fuera de su contenido publicable. HTML/CSS/JavaScript y gráficos Canvas propios, fuentes del sistema e iconos de texto, sin CDN. Entorno virtual `.venv` y versión de referencia registrada.
 
-Servicio local y pantalla en navegador, sin obligar a desplegar servicios comerciales. SQLite para activos, medidas, alarmas y reportes; adjuntos fuera de la base con identificadores y copias de respaldo. Retención y exportación configurables. El servicio de interfaz se limitará al equipo local; la futura entrada desde ESP32 tendrá autenticación y acceso de red acotado.
+El servidor escucha exclusivamente en 127.0.0.1. No hay microservicios, Docker, infraestructura remota ni sistema multiusuario. No habilita CORS y rechaza solicitudes con Host/Origin externos. Los errores del servidor se registran localmente. El almacenamiento utiliza transacciones SQLite; reconocimiento y cambios de configuración dejan eventos. El origen distingue simulado/real en el esquema, con recepción real expresamente deshabilitada.
 
-Vistas separadas: monitoreo del activo, historial, registro de intervención y configuración. Temperatura en °C y vibración con unidades y método claramente identificados. Gráficos sobrios, color acompañado de texto/icono y animaciones discretas. Estados explícitos: simulado, conectado, sin datos, alarma pendiente y alarma reconocida. Reconocer una alarma no borra su causa ni su historial.
+Los estados son normal, alarma, simulación detenida, sin datos y error de sistema. Reconocer una alarma no recupera su causa. Las reglas de temperatura y aceleración RMS tienen duración mínima e histéresis. Ausencia se supervisa solo durante simulación iniciada; detener registra suspensión. Lecturas actuales se ocultan al vencer, detener o perder conexión. Los gráficos son historial identificado, nunca muestras reales. Todos los instantes en la base están normalizados a UTC con zona y se muestran en America/Santiago.
 
-## Contrato de datos a implementar
+Se conserva el objetivo de firmware/ESP32 para una etapa futura. [Contrato implementado](../software/CONTRATO_DATOS.md), [guía](../software/README.md) y [pruebas ejecutadas](../software/VERIFICACION.md).
 
-Cada paquete: versión de esquema, identificador del dispositivo y activo, número de secuencia, hora de adquisición y recepción, origen real/simulado y calidad de señal. Indicadores con unidad, intervalo y método de cálculo. Distinguir muestras crudas de resúmenes por ventana.
+## Decisiones vigentes frente al diseño anterior
 
-Enviar un paquete por segundo no significa muestrear vibración a 1 Hz. El muestreo, filtrado y cálculo RMS deberán definirse y validarse con el firmware. No etiquetar aceleración como velocidad en mm/s ni asignar umbrales industriales universales sin validar aplicación y medición.
+El documento anterior describía una arquitectura prevista, con reportes ampliados, adjuntos, retención configurable y asistencia opcional. Para esta primera entrega, la instrucción vigente del usuario centra el alcance en simulación, historial, alarmas e intervenciones sin adjuntos. Las intervenciones son inmutables; una corrección es una nueva entrada que cita el original. No se implementaron componentes afectados como campo separado, retención configurable, adjuntos ni adaptador de IA. Esas ideas siguen como antecedentes para evaluar, no como funciones disponibles.
 
-Reportes humanos: activo, fecha de intervención y registro, autor, tipo de trabajo, observaciones, componentes afectados y adjuntos. Las correcciones conservarán trazabilidad. La incorporación a la base de conocimiento recupera documentos; no implica reentrenar automáticamente el modelo.
+MACHINA sigue siendo un candidato documental según [MACHINA.md](MACHINA.md). El núcleo funciona sin LLM, no instala MACHINA ni modelos y no depende de proveedores. La futura asistencia deberá conservar referencias, versiones, límites y confirmación humana; no podrá escribir directamente sobre reglas o historial. No hay predicción de fallas, vida útil ni diagnóstico validado.
 
-## Conexión futura de IA
+## Antecedente · extensión integrada 0.2.0 de motor y bomba
 
-Interfaz intercambiable del asistente con estado inicial `disabled`. Entrada: identificador de solicitud y activo, pregunta, ventana de indicadores, alarmas y referencias de reportes autorizados. Salida: estado, texto, referencias, limitaciones y propuestas pendientes de confirmación. Conservar versión del proveedor/modelo y tiempos para auditoría. Un modo de prueba debe identificarse como simulado.
+El usuario solicitó una segunda aplicación HTTP independiente conectada a neiron. Se conservó un único código principal y se añadieron perfil motor/base separada, emisor local y proceso de simulación independiente. `motor_model` calcula física reducida y ventanas de aceleración; `motor_engine` avanza sin navegador/receptor, persiste y audita; `motor_transport` entrega a 127.0.0.1 y sincroniza secuencias, sin cola de datos antiguos; `motor_server` ofrece controles y vista SVG; `motor_lab` inicia/cierra ambos procesos. El receptor externo conserva contrato, SQLite, alarmas y las cuatro vistas; no usa el generador de lavadora. Todo sigue en biblioteca estándar y loopback. [Modelo, referencias y contrato](../software/SIMULADOR_MOTOR_BOMBA.md).
 
-MACHINA será un adaptador o servicio separado, sin acceso directo de escritura a la base principal. Cancelación, tiempo máximo y manejo de errores serán parte del contrato. El núcleo de alarmas y almacenamiento no dependerá de un LLM. Esta separación permite decidir después entre modelo local, servidor central o API sin rehacer la interfaz.
+La instrucción posterior da independencia completa al banco. Los módulos 0.2 se conservan para trazabilidad, pero no son la aplicación vigente ni implican conexión automática de Motor / Lab a neiron.
+
+## Implementación vigente · Motor / Lab 1.0.0
+
+```mermaid
+flowchart LR
+  U[Controles web locales] --> E[Reloj y configuración]
+  E --> M[Motor y circuito de agua sintéticos]
+  M --> C[Contrato genérico v1]
+  C --> D[(SQLite MotorPumpTwin)]
+  C --> V[SVG mecánico y gráficos]
+  D --> H[Historial y CSV]
+  C --> R[REST y SSE]
+  C -. POST voluntario en loopback .-> X[Receptor elegido por el usuario]
+```
+
+Un proceso Python estándar con HTTP en **127.0.0.1:8766**, hilo físico aproximadamente cada segundo y emisor opcional separado. No importa módulos neiron. Datos en `%LOCALAPPDATA%\MotorPumpTwin`, independientes de los perfiles/base neiron. Fuente principal en `07_SIMULADOR_MOTOR_BOMBA` del proyecto local y distribución ZIP reproducible en el portafolio.
+
+| Módulo de la entrega `twin/` | Responsabilidad |
+| --- | --- |
+| `model.py` | Parámetros, hidráulica, inercia térmica y ventanas triaxiales sintéticas. |
+| `contract.py` | Paquete con versión, identidad, secuencia, UTC, origen y calidad. |
+| `engine.py` | Reloj, comandos, persistencia de estado y validez de lectura actual. |
+| `storage.py` | SQLite para paquetes, estado y eventos de configuración. |
+| `transport.py` | POST local voluntario; el fallo del receptor no detiene la planta. |
+| `server.py` / `launcher.py` | HTTP, REST/SSE/CSV, inicio/reutilización/cierre y guardas de loopback/origen. |
+| `static/app.*` | Controles, sensores, gráficos, estados y conexión optativa. |
+| `static/mechanics.*` | Capas y acabados SVG, selección interior, opacidad, giro y efectos de causas impuestas. |
+
+Las señales son temperatura superficial y RMS vectorial de aceleración (m/s², DC eliminado), en DE/NDE/carcasa/bomba. Las ventanas sintéticas tienen 1.000 Hz y 1 s; la tasa de publicación es aproximadamente 1 paquete/s. Configuración física acelerable a 1×/10×/60× sin acelerar el muestreo/publicación. La visualización no genera datos ni altera la física al cambiar transparencia o acercamiento.
+
+Motor / Lab muestra referencias térmicas/de vibración **ilustrativas**, mientras las alarmas con reconocimiento e intervenciones pertenecen a neiron. El contrato autónomo y el del banco 0.2 no se deben asumir intercambiables: un receptor nuevo debe validar/adaptar explícitamente esquema, identidad y secuencia. Los ejemplos de la entrega demuestran un receptor genérico optativo.
+
+Pausa/ausencia/error ocultan el paquete actual y congelan la animación; la planta puede continuar físicamente durante pérdida de telemetría. Reinicio conserva estado/historial, sin simular horas con el programa cerrado ni reactivar el envío. Instantes UTC y visualización America/Santiago. Sin CDN, CORS externo, IA, pagos, infraestructura industrial ni firmware conectado. [Entrega y límites](MOTOR_LAB.md).

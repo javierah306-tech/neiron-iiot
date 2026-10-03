@@ -1,0 +1,3 @@
+CPython 3.12.14 Windows x64
+Dependencias externas: ninguna
+Base de datos: SQLite incluida en CPython

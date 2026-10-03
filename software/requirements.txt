@@ -1,0 +1,3 @@
+# Sin dependencias de terceros. No ejecutar descargas para esta versión.
+# Toda la aplicación usa la biblioteca estándar de Python 3.12.
+# Versión de referencia probada: CPython 3.12.14 (Windows x64).

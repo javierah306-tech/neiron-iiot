@@ -1,0 +1,83 @@
+{
+  "project": "neiron / Motor Lab",
+  "state_date_santiago": "2026-10-02",
+  "data_source": "simulated",
+  "hardware_connected": false,
+  "ai_enabled": false,
+  "unit_tests_motor_lab": {
+    "passed": 23,
+    "environment": "CPython 3.12.14 / SQLite 3.53.1 / Windows",
+    "reference": "MotorLab/tests/test_twin.py en la entrega"
+  },
+  "unit_tests_neiron_and_historical_bank": {
+    "passed": 29,
+    "reference": "software/tests"
+  },
+  "browser": {
+    "browser": {
+      "result": "passed",
+      "started_utc": "2026-10-03T01:14:43.580Z",
+      "finished_utc": "2026-10-03T01:15:34.284Z",
+      "checks": [
+        "La copia autónoma inicia sin neiron ni receptor; salida HTTP desactivada",
+        "Cuatro zonas, valores sintéticos, parámetros y gráficos visibles en Edge",
+        "Selección de zona mediante tarjetas y teclado en la planta SVG",
+        "Desalineación eleva RMS y activa animación local, con texto además de color",
+        "Condiciones adversas calientan DE: halo rojo y movimiento concurrentes; bomba permanece refrigerada por agua",
+        "Normal restaura causas y RMS; el calor se conserva y luego disminuye",
+        "Temperatura del agua, válvula y NPSH son editables; cavitación destaca la bomba",
+        "Pérdida de señal oculta lecturas actuales y mantiene la evolución física; recuperación entrega datos frescos",
+        "Pausar detiene el reloj; apagar motor desacelera y conserva telemetría de enfriamiento",
+        "Un receptor activo no recibe datos hasta que el usuario activa el envío; URL editable conservada",
+        "Receptor genérico rechaza paquetes inválidos y duplicados, conservando el origen simulado",
+        "Desconectar detiene la salida y mantiene la simulación",
+        "CSV descargado desde la interfaz incluye fechas UTC, origen, unidades y las cuatro zonas",
+        "Reinicio real conserva estado, ajustes, secuencia e historial; salida siempre vuelve desactivada",
+        "Vista de 390 px sin desbordamiento, movimiento reducido y ninguna solicitud externa o error JavaScript"
+      ],
+      "count": 15,
+      "external_requests": 0
+    },
+    "mechanics": {
+      "result": "passed",
+      "started_utc": "2026-10-03T01:17:48.441Z",
+      "finished_utc": "2026-10-03T01:18:28.431Z",
+      "checks": [
+        "Inicio local, cuatro canales y siete componentes mecánicos con carcasa translúcida",
+        "Rotor y bolas del rodamiento se mueven con proyección sobre el eje horizontal",
+        "Acercamiento al motor, selección de componentes y teclado sincronizados con los sensores",
+        "Opacidad regulable y alternancia funcional entre acabado exterior e interior",
+        "Ocho causas localizadas: fricción, partículas, defecto, desalineación, masa excéntrica, fijación, aire y cavitación",
+        "Calor gradual en rodamiento DE, rojo en detalle/interior y vibración local con texto explicativo",
+        "Pérdida de señal quita lecturas/efectos actuales y detiene toda rotación sin reutilizar paquetes",
+        "Pausa/reanudación y recuperación de telemetría restauran las animaciones con datos nuevos",
+        "Recuperación conserva inercia térmica y movimiento reducido detiene la animación mecánica",
+        "390 px sin desbordamiento; sin errores JavaScript, solicitudes externas ni nuevas dependencias"
+      ],
+      "count": 10,
+      "javascript_errors": 0,
+      "external_requests": 0
+    }
+  },
+  "author_review": {
+    "scope": "Recorrido de todas las opciones del simulador en su PC",
+    "result": "Funcionamiento correcto confirmado por el autor al cierre de la etapa",
+    "industrial_validation": false
+  },
+  "notes": [
+    "Comprobaciones de navegador son pasos de integración, no pruebas unitarias adicionales.",
+    "Bases temporales y registros/rutas personales de ejecución no forman parte de este resumen.",
+    "Geometría y localizaciones ilustrativas; sin validación de hardware real."
+  ],
+  "distribution": {
+    "archive": "entregas/motor-lab-1.0.0-vista-mecanica.zip",
+    "files": 31,
+    "sha256": "c603b1ff64b2623c199ef392ff778cedd9c905f080b7e432a3e78bfba1916997",
+    "reproducible_two_builds": true,
+    "manifest_verified": true,
+    "unit_tests_from_extracted_archive": 23,
+    "operational_data_excluded": true,
+    "personal_execution_paths_excluded": true,
+    "local_document_links_verified": true
+  }
+}

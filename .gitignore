@@ -20,3 +20,22 @@ uploads/
 config_entorno.json
 ESTADO_GUARDADO.json
 MANIFIESTO_ARCHIVOS.json
+
+# Operación del prototipo local (nunca publicar)
+software/.venv/
+software/.test-artifacts/
+software/runtime/
+*.sqlite3
+*.sqlite3-*
+
+# Estado operativo del simulador motor (también si se cambia la carpeta de datos)
+simulador_estado.json
+simulador_estado.tmp
+eventos_simulador.jsonl
+
+# Ensayos, accesos ligados al PC y datos locales de cualquier entrega
+.test-artifacts/
+*.pyc
+*.log.*
+*.lnk
+.vscode/
