@@ -1,5 +1,7 @@
 # Arquitectura local · neiron P01 y Motor / Lab
 
+**Actualización del 13 de octubre de 2026:** se añade una edición web estática; la arquitectura local de abajo se conserva. [Propósito y datos](PROPOSITO_Y_DATOS.md) · [Plan de adquisición física de lavadora](PLAN_LAVADORA_FISICA.md).
+
 Estado al 2 de octubre de 2026: aplicación neiron y simulador autónomo Motor / Lab 1.0.0 implementados y probados con **datos simulados**. Diseño mecánico v03 conservado. Adquisición física pendiente e IA desactivada.
 
 ```mermaid
@@ -66,3 +68,26 @@ Las señales son temperatura superficial y RMS vectorial de aceleración (m/s²,
 Motor / Lab muestra referencias térmicas/de vibración **ilustrativas**, mientras las alarmas con reconocimiento e intervenciones pertenecen a neiron. El contrato autónomo y el del banco 0.2 no se deben asumir intercambiables: un receptor nuevo debe validar/adaptar explícitamente esquema, identidad y secuencia. Los ejemplos de la entrega demuestran un receptor genérico optativo.
 
 Pausa/ausencia/error ocultan el paquete actual y congelan la animación; la planta puede continuar físicamente durante pérdida de telemetría. Reinicio conserva estado/historial, sin simular horas con el programa cerrado ni reactivar el envío. Instantes UTC y visualización America/Santiago. Sin CDN, CORS externo, IA, pagos, infraestructura industrial ni firmware conectado. [Entrega y límites](MOTOR_LAB.md).
+
+## Edición web estática · Motor / Lab 1.1.0
+
+```mermaid
+flowchart LR
+  S[Alojamiento público: HTML/CSS/JS] --> B[Navegador de cada visitante]
+  U[Controles y escenarios] --> M[Modelo JavaScript por pestaña]
+  M --> T[Paquetes sintéticos y memoria: 3.600]
+  T --> V[SVG mecánico y gráficos]
+  T --> E[Descarga CSV / JSON y eventos]
+```
+
+`web/browser-model.js` adapta ecuaciones de `twin/model.py`, reloj/controles y paquete. `web/app.js` usa el motor en la pestaña en lugar de HTTP; `web/mechanics.*` conserva la vista SVG. `web/index.html` usa rutas relativas para alojamiento estático. No precisa API ni servidor del autor para simular. No incluye SQLite, recepción de sensores, REST/SSE/POST, autenticación ni una base de datos compartida.
+
+El estado pertenece a la pestaña y no persiste al cerrar/recargar. Retención limitada a 3.600 paquetes; gráficos de 240 y eventos de hasta 3.600. Ocultar suspende la física; mostrar espera un paquete nuevo y no reconstruye el tiempo ausente. Pausa congela la planta; pérdida de señal mantiene su evolución sin publicar lectura actual. Escala física 1×/10×/60× conserva adquisición de 1.000 muestras/eje por ventana, con publicación aproximadamente cada segundo activo.
+
+CSV exporta agregados por zona y ajustes por paquete; JSON incluye paquetes y cambios. Se conservan esquema genérico v1, `source: simulated`, secuencia, identidad, revisión y UTC; se añaden `settings`, `model_version` y `seed`. Un receptor deberá decidir explícitamente cómo trata esos campos adicionales. El generador aleatorio JavaScript es distinto; la paridad verificada corresponde a la hidráulica y dinámica térmica deterministas.
+
+Los contratos neiron y Motor / Lab siguen siendo distintos: la web no los conecta automáticamente. [Guía y límites web](../web/README.md) · [Verificación](REVISION_2026-10-13.md).
+
+## Transición preparada a la lavadora física
+
+La prioridad confirmada es lavadora con ESP32/MPU6050/DS18B20 tras adquirir y verificar las variantes de componentes. El receptor neiron actual está limitado a loopback y la adquisición real está deshabilitada. Se necesita implementar firmware, medir muestreo/ventana, identificar sesiones de arranque y diseñar transporte/receptor de red validado antes de aceptar datos reales. El [plan](PLAN_LAVADORA_FISICA.md) define etapas y criterios; documentarlo no equivale a haber implementado el firmware.

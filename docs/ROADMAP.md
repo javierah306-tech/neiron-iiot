@@ -1,5 +1,7 @@
 # Recorrido de neiron
 
+**Actualización vigente: 13 de octubre de 2026.** La lavadora será el primer ejemplo físico después de comprar los accesorios. Motor / Lab es el banco virtual complementario para probar la aplicación y compartir ensayos desde un navegador. [Propósito y datos](PROPOSITO_Y_DATOS.md) · [Plan físico](PLAN_LAVADORA_FISICA.md).
+
 ## Documentado hasta el 19 de septiembre de 2026
 
 - Definición del prototipo doméstico y selección preliminar de componentes.
@@ -45,3 +47,13 @@ Motor / Lab: **23 pruebas automáticas + 15 comprobaciones del recorrido complet
 ## Próxima etapa vigente
 
 Identificación del equipo real, firmware/adquisición ESP32, calibración y comparación de ciclos físicos, transporte validado y ensayos del gabinete. Los hitos de simulación, historial, alarmas e intervenciones ya están disponibles; impresión/montaje, hardware, certificación y diagnóstico industrial siguen pendientes. IA/MACHINA permanece como evaluación opcional futura.
+
+## 13 de octubre de 2026 · Motor / Lab Web 1.1.0
+
+Se adapta Motor / Lab al navegador conservando la vista mecánica y los controles, con física reducida en JavaScript y descarga CSV/JSON por ensayo. Cada pestaña ejecuta una sesión independiente, sin Python, comandos ni dependencia del PC del autor. [Abrir laboratorio](https://neiron-motor-lab.sunsetfly128.chatgpt.site) · [Fuente web](../web/README.md).
+
+La edición web sirve para mostrar el avance y experimentar con datos sintéticos; no crea una base central de visitantes. Retiene hasta 3.600 paquetes en memoria, suspende el avance en pestaña oculta y requiere descargar antes de cerrar/recargar. Las funciones Python/SQLite/REST/SSE se conservan en la entrega local 1.0.0. El modelo web usa las mismas ecuaciones térmicas e hidráulicas, con otro generador de ruido.
+
+Verificación nueva: 16 comprobaciones del modelo, comparación determinista con Python y 12 comprobaciones en Edge, con revisión visual escritorio/móvil. La distribución autónoma Python volvió a pasar sus 23 pruebas. [Detalle y alcance](REVISION_2026-10-13.md).
+
+El autor confirma la lavadora como primer ejemplo físico cuando adquiera los accesorios. Se prepara el plan de hardware, firmware, frecuencia de muestreo, transporte, recepción, trazabilidad y ciclos normales. La documentación relaciona carcasa/animación, neiron y Motor / Lab como laboratorio de desarrollo y pruebas. Firmware y recepción física permanecen pendientes, con criterios de aceptación definidos en el [plan](PLAN_LAVADORA_FISICA.md).

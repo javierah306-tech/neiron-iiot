@@ -1,0 +1,31 @@
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const http=require('node:http');
+(async()=>{
+ const server=http.createServer((req,res)=>{const name=new URL(req.url,'http://localhost').pathname;const filename=name==='/'?'index.html':name.slice(1);if(!['index.html','app.css','mechanics.css','app.js','mechanics.js','browser-model.js'].includes(filename)){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',filename.endsWith('.html')?'text/html':filename.endsWith('.css')?'text/css':'text/javascript');res.end(fs.readFileSync(filename));});
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+ const base='http://127.0.0.1:'+server.address().port+'/';
+ const browser=await chromium.launch({headless:true,channel:'msedge'});
+ const page=await browser.newPage({viewport:{width:1440,height:1100}});
+ const errors=[],requests=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>requests.push(r.url()));
+ const results=[];async function check(name,fn){await fn();results.push(name);console.log('PASS '+name);}
+ await page.goto(base);
+ await page.waitForFunction(()=>document.getElementById('system-state').textContent.includes('activa'));
+ await check('four zones and live readings',async()=>{assert.equal(await page.locator('.zone-card').count(),4);assert(!['â€”',''].includes(await page.locator('#temperature').textContent()));});
+ await check('mechanical SVG and component inspector',async()=>{assert(await page.locator('#component-select option').count()>=7);await page.locator('#component-select').selectOption({index:2});assert((await page.locator('#component-description').textContent()).length>10);await page.locator('#view-exterior').click();assert.equal(await page.locator('#view-exterior').getAttribute('aria-pressed'),'true');await page.locator('#view-transparent').click();await page.locator('#motor-focus').click();assert.equal(await page.locator('#motor-focus').getAttribute('aria-pressed'),'true');});
+ await check('scenario raises vibration',async()=>{const base=await page.evaluate(()=>browserEngine.current.zones.de.vibration_rms_m_s2);await page.locator('#preset').selectOption('imbalance');await page.locator('#apply-preset').click();await page.waitForTimeout(1300);assert((await page.evaluate(()=>browserEngine.current.zones.de.vibration_rms_m_s2))>base*2);});
+ await check('pause clears current readings and resumes',async()=>{await page.locator('#pause').click();assert.equal(await page.locator('#temperature').textContent(),'â€”');await page.locator('#pause').click();await page.waitForTimeout(1400);assert.notEqual(await page.locator('#temperature').textContent(),'â€”');});
+ await check('signal loss and recovery',async()=>{await page.locator('#signal-toggle').click();assert.equal(await page.locator('#temperature').textContent(),'â€”');await page.locator('#signal-toggle').click();await page.waitForTimeout(1400);assert.notEqual(await page.locator('#temperature').textContent(),'â€”');});
+ await check('motor shutdown control',async()=>{await page.locator('#motor-toggle').click();assert((await page.locator('#system-state').textContent()).includes('apagado'));await page.locator('#motor-toggle').click();});
+ await check('time scale control',async()=>{await page.locator('#time-scale').selectOption('60');assert.equal(await page.evaluate(()=>browserEngine.plant.settings.time_scale),60);});
+ await check('CSV download',async()=>{const wait=page.waitForEvent('download');await page.locator('#export-csv').click();const d=await wait;await d.saveAs('browser-export.csv');const csv=fs.readFileSync('browser-export.csv','utf8');assert(csv.includes('simulated'));assert(csv.includes('misalignment_mm'));});
+ await check('JSON export includes events and packets',async()=>{const wait=page.waitForEvent('download');await page.locator('#export-json').click();const d=await wait;await d.saveAs('browser-export.json');const j=JSON.parse(fs.readFileSync('browser-export.json','utf8'));assert(j.packets.length>0);assert(j.events.some(e=>e.event==='parameters_changed'));});
+ await check('independent visitor session',async()=>{const page2=await browser.newPage();await page2.goto(base);await page2.waitForFunction(()=>globalThis.MotorBrowser);assert.notEqual(await page.evaluate(()=>browserEngine.instance_id),await page2.evaluate(()=>browserEngine.instance_id));assert.equal(await page2.evaluate(()=>browserEngine.plant.settings.imbalance_gmm),0);await page2.close();});
+ await check('mobile layout fits viewport',async()=>{await page.setViewportSize({width:390,height:844});await page.waitForTimeout(500);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1));await page.screenshot({path:'mobile.png',fullPage:true});});
+ await page.setViewportSize({width:1440,height:1100});await page.locator('#plant').scrollIntoViewIfNeeded();await page.screenshot({path:'desktop.png',fullPage:true});
+ await check('no runtime errors or API requests',async()=>{assert.deepEqual(errors,[]);assert(!requests.some(u=>u.includes('/api/')));});
+ fs.writeFileSync('browser-results.json',JSON.stringify({browser:'Microsoft Edge headless',checks:results,errors,requests},null,2));
+ await browser.close();
+ server.close();
+})().catch(e=>{console.error(e);process.exit(1);});

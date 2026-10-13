@@ -1,0 +1,140 @@
+/* Vista mecánica local. Capas, materiales y comportamiento independientes
+   del modelo Python y del contrato público de telemetría. */
+.mechanical-toolbar {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:19px;
+  padding-top:15px;
+  border-top:1px solid #223c4a;
+}
+.view-switch {
+  display:inline-flex;
+  padding:3px;
+  border:1px solid #2d4957;
+  background:#081720;
+  border-radius:7px;
+}
+.view-switch button {
+  padding:7px 10px;
+  font-size:11px;
+  border-color:transparent;
+  background:transparent;
+  color:#859fac;
+}
+.view-switch button[aria-pressed="true"] {
+  background:#1a3c48;
+  border-color:#396875;
+  color:#a4f0dc;
+}
+.shell-control {
+  display:grid;
+  grid-template-columns:auto 85px 32px;
+  align-items:center;
+  gap:8px;
+  color:#9bb3bf;
+  font-size:10px;
+}
+.shell-control input {padding:0; height:17px;}
+.shell-control output {color:#bad4dc; font-variant-numeric:tabular-nums;}
+#motor-focus {margin-left:auto; font-size:11px; padding:9px 11px;}
+#plant-svg {aspect-ratio:1000 / 460; overflow:hidden;}
+.mechanical-part,.internal-bearing {cursor:pointer;}
+[data-part]:focus-visible {outline:none;}
+[data-part]:focus-visible > .selection-ring {opacity:1; stroke:#dcfff0; stroke-width:2.2;}
+[data-part="casing"]:focus-visible {filter:drop-shadow(0 0 3px #7cebd3);}
+.motor-shell,.fan-cover,#glass-outline,#air-streams,#terminal-box,.selection-ring {pointer-events:none;}
+.selection-ring {
+  fill:none;
+  stroke:#98f3d6;
+  stroke-width:1.4;
+  stroke-dasharray:4 4;
+  opacity:0;
+}
+.part-selected > .selection-ring {opacity:.9;}
+.motor-shell {opacity:1; transition:opacity .4s;}
+.transparent .motor-shell {opacity:var(--shell-opacity,.2);}
+#glass-outline {opacity:0; transition:opacity .4s;}
+.transparent #glass-outline {opacity:.7;}
+.transparent .fan-cover {opacity:.22;}
+.stage:not(.transparent) .internal-bearing > :not(.heat) {opacity:0; pointer-events:none;}
+.stage:not(.transparent) #part-stator,
+.stage:not(.transparent) #part-rotor {visibility:hidden;}
+.stage:not(.transparent) .motor-labels {display:none;}
+.stage .nameplate {font-size:8px; letter-spacing:.5px; fill:#c5d8e3;}
+.stage .part-caption {font-size:9px; fill:#789cad;}
+.motor-labels {display:none; pointer-events:none;}
+.motor-focus .motor-labels {display:block;}
+.stage .motor-labels text {font-size:7px; letter-spacing:.35px; fill:#c5e3df;}
+.motor-labels path {fill:none; stroke:#88aeb1; stroke-width:.6;}
+.motor-focus .overview-labels,.motor-focus .select-zones,
+.motor-focus #water-circuit,.motor-focus #visual-pump {visibility:hidden;}
+.motor-focus .stage-overlay {font-size:8px;}
+.cause-effect {opacity:0; pointer-events:none; transition:opacity .5s;}
+.cause-looseness #mount-bolts {stroke:#ffb56e; stroke-width:2;}
+.running.cause-looseness #motor-feet {animation:shake .3s linear infinite; --shake:1.5px;}
+.running #air-streams {animation:flow 2.5s linear infinite;}
+.cause-alignment #shaft-axis {stroke:#ffc17b;}
+.mechanical-status {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:5px 12px;
+  margin:12px 0;
+  color:#8dcbbd;
+  font-size:10px;
+}
+.mechanical-status small {color:#738f9e; font-size:10px;}
+.mechanical-status .unavailable {color:#dbb889;}
+.mechanical-inspector {
+  display:grid;
+  grid-template-columns:166px minmax(0,1fr);
+  margin-top:16px;
+  padding:15px;
+  gap:18px;
+  border:1px solid #2d4655;
+  border-radius:8px;
+  background:linear-gradient(115deg,#102836b0,#0c1c28);
+}
+.detail-figure {margin:0; text-align:center;}
+.detail-figure svg {width:100%; max-width:160px; display:block; margin:auto;}
+.detail-figure svg text {font:9px "Segoe UI",Arial,sans-serif; fill:#9bc5cc; letter-spacing:1px;}
+.detail-figure figcaption {color:#769ba8; font-size:9px; line-height:1.5;}
+.detail-figure p {color:#a9cbd3; font-size:10px; margin:6px 0 0; font-variant-numeric:tabular-nums;}
+.component-control {display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin-bottom:12px;}
+.component-control label {font-size:10px; color:#89a6b5;}
+.component-control select {max-width:280px; padding:7px 10px; font-size:11px;}
+.mechanical-inspector h3 {font-size:15px; font-weight:550; margin:0 0 7px; color:#d8e9ec;}
+#component-description {margin:0; font-size:11px; color:#90acba; line-height:1.7;}
+.mechanical-inspector .eyebrow {font-size:8px; margin:14px 0 8px;}
+#mechanical-effects {list-style:none; margin:0; padding:0; font-size:11px; line-height:1.6; color:#a0b8c2;}
+#mechanical-effects li + li {margin-top:9px;}
+#mechanical-effects strong {font-size:11px; font-weight:500; color:#f0bc86; display:block;}
+#mechanical-effects span {display:block; font-size:10px; color:#8faab7;}
+.mechanical-note {font-size:10px; color:#7e9aa8; line-height:1.6; margin:12px 0 16px;}
+.detail-vibrating #detail-balls {animation:detail-pulse .35s ease-in-out infinite;}
+.detail-unavailable .heat,.detail-unavailable .cause-effect {opacity:0 !important; transition:none;}
+@keyframes detail-pulse {50% {opacity:.45;}}
+.stale #air-streams,.stale #motor-feet {animation:none;}
+@media(max-width:1150px) {
+  .shell-control {grid-template-columns:auto 65px 32px;}
+  #motor-focus {margin-left:0;}
+  .mechanical-inspector {grid-template-columns:135px minmax(0,1fr); gap:12px; padding:12px;}
+}
+@media(max-width:560px) {
+  .mechanical-toolbar {gap:9px;}
+  .shell-control {grid-template-columns:auto 66px 32px;}
+  .mechanical-inspector {grid-template-columns:90px minmax(0,1fr); gap:12px; padding:10px;}
+  .mechanical-inspector h3 {font-size:13px;}
+  .component-control {grid-column:1/-1;}
+  .component-control select {max-width:100%;}
+  #component-description {font-size:10px;}
+  .mechanical-inspector .eyebrow {letter-spacing:.7px;}
+  .motor-focus .stage-overlay {font-size:6px;}
+  .mechanical-note {font-size:9px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .running #air-streams,.running.cause-looseness #motor-feet,.detail-vibrating #detail-balls {animation:none;}
+  .motor-shell,#glass-outline,.cause-effect {transition:none;}
+}

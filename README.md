@@ -1,64 +1,80 @@
-# neiron · Monitoreo IIoT de bajo costo
+# neiron · Laboratorio de monitoreo IIoT
 
-Proyecto de Javier ([javierah306-tech](https://github.com/javierah306-tech)) para explorar monitoreo de temperatura y vibración en activos de pequeñas empresas industriales. El primer banco de pruebas propuesto es una lavadora doméstica.
+Proyecto de Javier ([javierah306-tech](https://github.com/javierah306-tech)) para explorar monitoreo accesible de temperatura y vibración, combinando diseño mecánico, electrónica prevista, software de registro y experimentación virtual.
 
-**Estado al 2 de octubre de 2026: diseño 3D v03, software neiron funcional y simulador autónomo Motor / Lab 1.0.0 con motor translúcido.** Todo el monitoreo disponible utiliza **DATOS SIMULADOS**. Hardware real y validación física pendientes; IA desactivada.
+**Estado al 13 de octubre de 2026:** gabinete y demostración Blender v03; aplicación neiron para monitoreo, historial, alarmas e intervenciones; Motor / Lab autónomo 1.0.0; edición web Motor / Lab 1.1.0. **Todas las lecturas disponibles son simuladas.** La lavadora será el primer ejemplo físico cuando se compren los accesorios. Hardware conectado, calibración y validación física pendientes; IA desactivada.
 
-![Motor / Lab: motor translúcido, acoplamiento y bomba de agua con datos simulados](docs/imagenes/motor-lab-conjunto.png)
+## Abrir Motor / Lab en el navegador
 
-## Avance actual · Motor / Lab
+**[Abrir laboratorio virtual · sin instalar ni usar comandos](https://neiron-motor-lab.sunsetfly128.chatgpt.site)**
 
-Simulador Python **independiente y reutilizable** de motor monofásico de 5 HP → acoplamiento → bomba centrífuga de agua limpia. Funciona en Windows, en **127.0.0.1:8766**, con SQLite y web local; sin dependencias de terceros ni internet durante su operación.
+Cada visitante puede explorar motor monofásico de 5 HP, acoplamiento y bomba de agua, ver el interior del motor, modificar condiciones y descargar CSV/JSON de su ensayo. La simulación se ejecuta en su propia pestaña; tu PC puede estar apagado. No requiere cuenta ni Python para funcionar. Compatible por diseño con navegadores modernos; esta revisión probó Edge y un viewport móvil, no todos los navegadores ni teléfonos físicos.
 
-- Temperatura superficial y aceleración RMS sintéticas en cuatro zonas: DE, NDE, carcasa y bomba.
-- Condiciones de lubricación, contaminación del lubricante, desalineación, desequilibrio, fijación, defecto impuesto, ventilación y cavitación.
-- Motor translúcido con opacidad regulable, vista exterior, acercamiento y siete componentes explorables. Rotor, estator, eje, ventilador y detalle de rodamientos visibles.
-- Historial/CSV, evolución térmica gradual, pausa, apagado, pérdida de señal y recuperación con datos nuevos.
-- REST, SSE y POST local opcional: el usuario decide cuándo conectarlo a otro programa.
+![Motor / Lab: interior ilustrativo, acoplamiento y bomba](docs/imagenes/motor-lab-conjunto.png)
 
-**[Descargar código editable · ZIP](entregas/motor-lab-1.0.0-vista-mecanica.zip)** · [Guía y capturas](docs/MOTOR_LAB.md) · [Resultados y pruebas](docs/RESULTADOS_2026-10-02.md) · [SHA-256](entregas/SHA256SUMS.txt)
+## Propósito: de la idea a una prueba medible
 
-Extrae todo el ZIP, prepara Python 3.12 y abre `MotorLab/iniciar.bat`. Los lanzadores crean su entorno aislado; `cerrar.bat` guarda y cierra. La distribución se genera desde la única carpeta principal de desarrollo; no se mantiene aquí una segunda implementación del simulador.
+neiron busca comprobar una cadena completa: **observar un activo → obtener datos con origen y unidades claros → guardarlos → mostrar cambios → registrar alarmas e intervenciones → contrastar el resultado con lo ocurrido**. Primero se desarrolló con simulación para poder probar esa cadena antes de disponer de electrónica y de un equipo instrumentado.
 
-**Verificación:** 23 pruebas automáticas del simulador y 25 comprobaciones en Edge (15 del recorrido completo y 10 de la vista mecánica), todas aprobadas; revisión funcional del autor con todas sus opciones. El motor interno y las marcas representan geometría y causas impuestas, no mediciones reales ni un diagnóstico validado.
+Motor / Lab se hizo como **banco de pruebas con datos sintéticos para comprobar el funcionamiento de la aplicación y de futuras integraciones**. Permite introducir causas conocidas —desalineación, poca lubricación o ventilación, entre otras— y observar señales diferentes. Facilita probar contratos, recepción, historial, exportación, recuperación de señal y visualización sin depender de un motor real. La edición web también permite que otras personas revisen el trabajo desde un enlace.
 
-## Lo que ya existe
+El laboratorio virtual reúne las ideas del proyecto: carcasa y distribución de componentes, explicación animada de sensores/ESP32/Wi-Fi/PC, aplicación neiron y experimentación motor–bomba. La tecnología e innovación están en unir diseño reproducible, instrumentación accesible y ensayos trazables. Su utilidad industrial deberá demostrarse con datos físicos; no se afirma una invención inédita, diagnóstico predictivo ni rendimiento ya validado.
 
-- Gabinete angular y modular con marca neiron, modelado en Blender.
-- Escena animada que explica sensores → ESP32 → Wi-Fi → PC.
-- Cuerpo y tapa independientes para una primera impresión de ajuste.
-- Scripts para reproducir las escenas y documentación de sus limitaciones.
-- Aplicación [neiron P01](software/README.md) con monitoreo, historial, alarmas e intervenciones; lavadora simulada en 127.0.0.1:8765.
+**[Propósito, datos y relación entre las partes](docs/PROPOSITO_Y_DATOS.md)** · **[Plan preparado para la lavadora física](docs/PLAN_LAVADORA_FISICA.md)**
 
-![Demostración conceptual v03 de la lavadora, sin hardware conectado](04_PROTOTIPOS_3D/renders/neiron_lavadora_demo_v03.png)
+## Todo lo que ya tenemos
 
-![Cuerpo y tapa de prueba](04_PROTOTIPOS_3D/renders/neiron_piezas_impresion_v03.png)
+| Parte | Disponible | Para qué sirve / límite |
+| --- | --- | --- |
+| Diseño mecánico v03 | Gabinete angular/modular; cuerpo y tapa Blender/STL; renders; scripts generadores | Revisar distribución y preparar una impresión de ajuste. Junta, entradas, montaje y cotas reales pendientes. |
+| Demostración de lavadora | Escena Blender de 240 fotogramas con sensores → ESP32 → Wi-Fi → PC | Explicar la arquitectura prevista; no comunica con sensores. |
+| Aplicación neiron P01 | Monitoreo, SQLite, historial/CSV, alarmas con histéresis y reconocimiento, intervenciones | Probar gestión de datos con lavadora simulada. Recepción de datos físicos deshabilitada. |
+| Banco motor–bomba 0.2 | Emisor y receptor separados dentro del paquete neiron | Antecedente de integración; conservado para trazabilidad. |
+| Motor / Lab 1.0.0 local | Modelo reducido, cuatro zonas, señales triaxiales, controles, SQLite, REST/SSE, POST local opcional | Banco autónomo reutilizable. Envío voluntario; no está conectado automáticamente a neiron. |
+| Motor / Lab Web 1.1.0 | Animación/inspector conservados, física JavaScript, escenarios, CSV/JSON | Compartir ensayos desde el navegador; datos de cada pestaña en memoria, sin base central. |
+| Documentación y verificación | Arquitectura, contratos, guías, resultados, historia, empaquetador y sumas SHA-256 | Reproducir y distinguir lo implementado, lo histórico y lo pendiente. |
 
-## Explorar
+**[Inventario, revisión y verificación de esta entrega](docs/REVISION_2026-10-13.md)** · [Evoluciones del proyecto](docs/ROADMAP.md)
 
-- Abrir `04_PROTOTIPOS_3D/blend_files/neiron_lavadora_demo_v03.blend` en Blender. Reproducir fotogramas 1–240.
-- Abrir `04_PROTOTIPOS_3D/blend_files/neiron_carcasa_y_tapa_PRUEBA_v03.blend` para inspeccionar las dos piezas vacías.
-- Consultar [guía de la entrega](04_PROTOTIPOS_3D/GUIA_ENTREGA_V03.md) y [scripts](03_SCRIPTS_BLENDER_CODEX/README_SCRIPTS.md).
-- Consultar [arquitectura implementada y pendientes](docs/ARQUITECTURA_SOFTWARE.md), [evaluación histórica de MACHINA](docs/MACHINA.md) y [recorrido del proyecto](docs/ROADMAP.md).
+## Cómo se complementan las versiones
 
-Los generadores reinician su escena: ejecutarlos en un proceso independiente de Blender mediante `blender --background --python 03_SCRIPTS_BLENDER_CODEX/neiron_demo_v03.py`. Conservar copias si se han modificado manualmente los archivos de salida. La dependencia geométrica `prototipo_01_neiron_v02.py` está incluida.
+```mermaid
+flowchart LR
+  D[Diseño y demostración lavadora] --> P[Plan de adquisición física]
+  N[neiron: monitoreo, historial y alarmas] --> P
+  M[Motor / Lab: escenarios y datos sintéticos] --> T[Pruebas de contrato y procesamiento]
+  T -. adaptación explícita .-> N
+  M --> W[Edición web: experimentar y compartir]
+  P -. después de comprar y validar .-> H[Lavadora con ESP32 y sensores]
+```
 
-## Prototipo físico previsto
+El contrato autónomo de Motor / Lab y el de neiron requieren un adaptador validado; no se asume que sean intercambiables. Los controles del simulador introducen causas conocidas; el programa no las descubre mediante un diagnóstico.
 
-ESP32 de 30 pines con Micro USB; MPU6050 externo para vibración; DS18B20 para temperatura superficial; adaptador externo USB de 5 V / 2 A. El gabinete se propone en pared detrás de la lavadora. Dimensiones nominales del conjunto: 120 × 90 × 55 mm.
+## Datos y límites de la edición web
 
-Los STL son de prueba: cuerpo de 120 × 90 × 51 mm y tapa de 120 × 90 × 4 mm. Faltan junta, entradas definitivas, fijación mural y validación física. No se declara protección IP certificada ni diagnóstico predictivo validado. El movimiento interno de la lavadora es esquemático.
+- Temperatura superficial sintética en °C y aceleración RMS vectorial en m/s², con componente DC eliminada, en NDE, carcasa, DE y bomba.
+- Ventanas sintéticas de 1.000 muestras por eje/1 s; publicación aproximada de un paquete por segundo activo. El visor muestra 120 ms; los archivos exportan agregados, no las ventanas completas.
+- CSV: zona, señales, hora UTC, identidad/secuencia, versión, semilla, revisión y parámetros del ensayo. JSON añade eventos y paquetes.
+- Últimos 3.600 paquetes por pestaña; gráficos de 240. Cerrar o recargar inicia otro ensayo: **descargar antes de cerrar**. Pestaña oculta suspende el avance y al volver espera datos nuevos.
+- Sin recolección central de visitantes, SQLite ni REST/SSE/POST en esta edición. Esos servicios pertenecen a la versión local.
+- Modelo sin calibrar, geometría supuesta y umbrales visuales ilustrativos. No estima vida útil, no certifica protección IP y no valida una IA con datos reales.
 
-## Software local · 1 de octubre de 2026
+## Entregas y documentación
 
-Aplicación editable en [software](software/README.md): monitoreo, historial SQLite y CSV, alarmas con histéresis y reconocimiento, e intervenciones separadas. Abre `software/iniciar.bat` en Windows. Funciona exclusivamente en 127.0.0.1, sin dependencias de terceros ni internet. Los datos operativos quedan fuera del repositorio. Consulta el [contrato](software/CONTRATO_DATOS.md) y la [verificación](software/VERIFICACION.md).
+**[Motor / Lab local · código editable ZIP](entregas/motor-lab-1.0.0-vista-mecanica.zip)** · [Guía local](docs/MOTOR_LAB.md) · [Guía web](web/README.md) · [SHA-256](entregas/SHA256SUMS.txt)
 
-## Próxima etapa
+Para la versión local Windows, extraer el ZIP completo, preparar Python 3.12 y abrir `MotorLab/iniciar.bat`; `cerrar.bat` guarda y cierra. [neiron local](software/README.md) inicia con `software/iniciar.bat`. Los datos operativos se almacenan fuera del repositorio. El acceso Windows `.lnk` conserva ese funcionamiento local; el enlace público de arriba es la alternativa para compartir.
 
-Validar firmware, muestreo, montaje y adquisición real con ESP32 de 30 pines, MPU6050 y DS18B20. La IA sigue desactivada; no se instaló MACHINA ni se descargaron modelos.
+![Demostración conceptual de lavadora v03](04_PROTOTIPOS_3D/renders/neiron_lavadora_demo_v03.png)
 
-Este repositorio muestra avances de ingeniería; no es un producto industrial terminado. Se ha preparado una selección para publicación sin fotografías domésticas originales, respaldos completos ni datos de operación reales. La licencia del trabajo propio está pendiente de definición por su autor; la licencia de MACHINA no se aplica automáticamente a neiron.
+![Cuerpo y tapa para primera impresión de prueba](04_PROTOTIPOS_3D/renders/neiron_piezas_impresion_v03.png)
 
-## Antecedente · banco motor–bomba integrado 0.2.0
+Modelos en `04_PROTOTIPOS_3D/blend_files/`; STL en `04_PROTOTIPOS_3D/impresion_prueba/`. Conjunto nominal 120 × 90 × 55 mm; cuerpo 51 mm y tapa 4 mm. [Guía mecánica](04_PROTOTIPOS_3D/GUIA_ENTREGA_V03.md) · [Scripts Blender](03_SCRIPTS_BLENDER_CODEX/README_SCRIPTS.md). Los generadores reinician la escena: ejecutarlos en un proceso independiente y conservar sus dependencias.
 
-[Banco anterior y guía](software/SIMULADOR_MOTOR_BOMBA.md), conservado para trazabilidad: simulación y recepción en procesos separados pero dentro del paquete neiron, con perfiles/base distintos de la lavadora. La decisión vigente es **Motor / Lab autónomo**, sin conexión automática ni dependencia de neiron. Su entrega actual está enlazada arriba. Los iniciadores del banco anterior no son el inicio recomendado del simulador vigente.
+## Próximo paso acordado
+
+Comprar y confirmar ESP32 de 30 pines Micro USB, MPU6050 GY-521, DS18B20 y alimentación externa regulada USB 5 V/2 A; después seguir el [plan de lavadora](docs/PLAN_LAVADORA_FISICA.md). Ese documento define tareas previas, adquisición, registro, ensayos y criterios de avance; no presenta firmware inexistente como terminado.
+
+[Arquitectura](docs/ARQUITECTURA_SOFTWARE.md) · [Contrato neiron](software/CONTRATO_DATOS.md) · [Resultados anteriores](docs/RESULTADOS_2026-10-02.md) · [MACHINA: evaluación opcional histórica](docs/MACHINA.md)
+
+Licencia del trabajo propio pendiente de decisión del autor. La licencia de MACHINA no se aplica automáticamente a neiron. El portafolio excluye bases operativas, credenciales, respaldos completos y fotografías domésticas originales.

@@ -1,5 +1,9 @@
 # Motor / Lab · simulador autónomo 1.0.0
 
+**Nueva opción desde el 13 de octubre de 2026: [abrir Motor / Lab Web 1.1.0](https://neiron-motor-lab.sunsetfly128.chatgpt.site)** sin Python, consola ni servidor del autor. Conserva vista/controles y permite ensayos personales con descarga CSV/JSON. [Guía web](../web/README.md) · [Por qué se hizo y para qué sirven sus datos](PROPOSITO_Y_DATOS.md).
+
+Esta guía describe la distribución local 1.0.0, que conserva SQLite y las interfaces REST/SSE/POST. La edición web genera datos en cada pestaña, retiene 3.600 paquetes en memoria y no los conserva al cerrar/recargar. No conecta automáticamente con neiron ni recoge datos de todos los visitantes. La lavadora será el primer ejemplo físico tras adquirir electrónica, conforme al [plan](PLAN_LAVADORA_FISICA.md).
+
 Entrega vigente al **2 de octubre de 2026**, con revisión del motor translúcido. Desarrollado y probado en Windows por el proyecto neiron. El autor confirmó funcionamiento correcto tras recorrer todas sus opciones.
 
 ![Conjunto motor, acoplamiento y bomba](imagenes/motor-lab-conjunto.png)
